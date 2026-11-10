@@ -1,0 +1,42 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---- Java / Maven ----
+target/
+*.class
+*.jar
+*.war
+
+# ---- N8N runtime data (large local sqlite DB, never commit) ----
+n8n_data/
+*.sqlite
+*.sqlite3
+
+# ---- Node ----
+node_modules/
+
+# ---- IDE / OS ----
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ---- Secrets (keep .env.example) ----
+.env
+*.env
+!.env.example
+
+# ---- Logs / temp ----
+*.log
+logs/
+tmp/

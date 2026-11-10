@@ -1,0 +1,17 @@
+server:
+  port: 8082 # Java服务端口
+spring:
+  datasource:
+    # 数据源参数化：优先读环境变量，未设置时回落到本地开发默认值。
+    # 部署时通过 DB_URL / DB_USERNAME / DB_PASSWORD 覆盖，避免把密码写死在代码里。
+    url: '${DB_URL:jdbc:mysql://localhost:3306/project06?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}'
+    username: '${DB_USERNAME:root}' # 本地默认 root，生产用环境变量注入
+    password: '${DB_PASSWORD:123456}' # 本地默认 123456，生产用环境变量注入
+    driver-class-name: com.mysql.cj.jdbc.Driver # MySQL 8 驱动类
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true # 下划线转驼峰：列tenant_id 字段tenantId
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 控制台打印SQL,方便调试
+  global-config:
+    db-config:
+      id-type: assign_id # 主键用雪花算法自动生成，不用手动setId

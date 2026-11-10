@@ -1,0 +1,12 @@
+# 构建镜像时不进入上下文的文件
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+tests/
+.env
+*.env
+*.log
+Dockerfile
+.dockerignore

@@ -1,0 +1,87 @@
+{
+  "name": "A · 钉钉高危告警推送",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alert",
+        "options": {
+          "responseCode": {
+            "values": {}
+          },
+          "responseData": "ok",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7fce8e15-0308-4e0e-b3e0-832a275e302e",
+      "name": "告警 Webhook",
+      "webhookId": "5572b0ed-cbf9-4c13-8c7a-31ed56ff7ce2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://oapi.dingtalk.com/robot/send?access_token=YOUR_DINGTALK_ACCESS_TOKEN",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"msgtype\": \"text\",\n  \"text\": {\n    \"content\": \"【舆情高危告警】\\n标题：{{ $json.body.title }}\\n内容：{{ $json.body.content }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "73b7b35b-1c65-4829-b9c4-27d343f52511",
+      "name": "钉钉群机器人"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "告警 Webhook": {
+      "main": [
+        [
+          {
+            "node": "钉钉群机器人",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "249b8f89-9b02-4ac4-b49b-e31e521bc02a",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "nodeGroups": [],
+  "id": "mYkropQaeLRcn3oM",
+  "tags": []
+}

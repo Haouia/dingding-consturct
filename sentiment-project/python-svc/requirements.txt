@@ -1,0 +1,7 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+openai==1.51.0
+# openai 1.51 会向 httpx.Client 传 proxies 参数，httpx 0.28 已移除该参数；
+# 不锁定会导致 import 阶段 TypeError，服务无法启动
+httpx==0.27.2
+pydantic==2.9.2

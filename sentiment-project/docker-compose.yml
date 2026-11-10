@@ -1,0 +1,20 @@
+services:
+  # N8N：负责定时调度、数据流转与钉钉推送
+  # Python / Java 服务运行在宿主机，N8N 通过 host.docker.internal 访问它们
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - GENERIC_TIMEZONE=Asia/Shanghai
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+    extra_hosts:
+      # Linux 下让容器能解析 host.docker.internal（Docker Desktop 自带）
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./n8n_data:/home/node/.n8n

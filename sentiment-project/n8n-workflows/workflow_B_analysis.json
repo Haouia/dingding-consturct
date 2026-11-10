@@ -1,0 +1,191 @@
+{
+  "name": "B · 舆情采集与情感分析",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ae1797bd-1b1e-41dd-911d-a7300cf8c821",
+      "name": "定时触发"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8002/feed",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b6ef9481-95fe-4ec5-b9ca-a4a765f4d0a2",
+      "name": "拉取模拟舆情"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8001/analyze",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"{{ $json.title }}\",\n  \"content\": \"{{ $json.content }}\",\n  \"source\": \"{{ $json.source }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "c221929c-5612-4b8a-b90e-92f0e01f80ae",
+      "name": "情感分析"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "382bf5e6-ef6f-476e-a5b9-590dea8d451a",
+              "leftValue": "={{ $json.level }}",
+              "rightValue": "低",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        656,
+        0
+      ],
+      "id": "b481d837-22d0-49f6-8ef7-1dda197ded0d",
+      "name": "分级判断"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8082/sentiment/save",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"{{ $json.title }}\",\n  \"content\": \"{{ $json.content }}\",\n  \"sentiment\": \"{{ $json.sentiment }}\",\n  \"level\": \"{{ $json.level }}\",\n  \"source\": \"{{ $json.source }}\",\n  \"tenantId\": 1\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        912,
+        -64
+      ],
+      "id": "ccedca33-1fa3-4109-a9cc-8f6acab95898",
+      "name": "落库(中/高危)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8082/sentiment/save",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"{{ $json.title }}\",\n  \"content\": \"{{ $json.content }}\",\n  \"sentiment\": \"{{ $json.sentiment }}\",\n  \"level\": \"{{ $json.level }}\",\n  \"source\": \"{{ $json.source }}\",\n  \"tenantId\": 1\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        912,
+        96
+      ],
+      "id": "8843ed55-b33f-4abb-adca-d0066ba540c3",
+      "name": "落库(低危)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "定时触发": {
+      "main": [
+        [
+          {
+            "node": "拉取模拟舆情",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "拉取模拟舆情": {
+      "main": [
+        [
+          {
+            "node": "情感分析",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "情感分析": {
+      "main": [
+        [
+          {
+            "node": "分级判断",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分级判断": {
+      "main": [
+        [
+          {
+            "node": "落库(中/高危)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "落库(低危)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fc2547a5-d6b8-4450-8790-ab5febfb4415",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "nodeGroups": [],
+  "id": "ZNCPuM2xdaTJK6Xn",
+  "tags": []
+}
